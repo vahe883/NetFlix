@@ -5,7 +5,7 @@ export default function Register() {
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-
+    
     const emailRef = useRef()
     const passwordRef = useRef()
 
@@ -26,7 +26,7 @@ export default function Register() {
                 alt="" 
                 className='logo'    
             />
-                <button className="login">Sign In</button>
+                <button className="loginButton">Sign In</button>
           </div>
       </div>
       <div className="container">

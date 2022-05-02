@@ -1,50 +1,70 @@
 import './listitem.scss'
-import trailer from '../../trailer/MaxPayne_Item.mp4'
-import pain_1 from '../../pics/pain_1.jpg'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import AddIcon from '@mui/icons-material/Add';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-export default function Listitem({index}) {
+export default function Listitem({index, item}) {
 
   const [isHover, setIsHover] = useState(false)
+  const [isData, setIsData] = useState({})
+
+  useEffect(()=>{
+    const getMovie = async () => {
+      try {
+        const res = await axios.get("/movies/find/"+item,  {
+          headers: {
+            token : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNjQ4YzY1N2YwMjdmM2I2MDY0Y2EyYiIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY1MTUxNDUyNiwiZXhwIjoxNjUxNjAwOTI2fQ.2HlNLzguQnwOrgBMzl4t0C6v1wYAT5hcSLops1Y2HsE"
+          }
+        })
+        setIsData(res.data)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    getMovie()
+  },[item])
   
   return (
-    <div 
-      className='listitem' 
-      onMouseEnter={() => setIsHover(true)} 
-      onMouseLeave={() => setIsHover(false)}
-      style={{left: isHover && index * 225 - 50 + index * 2.5}}
-    >
-      <img src={pain_1} alt="" />
+    <Link to={{pathname:"/watch", movie:isData}}>
+      <div 
+        className='listitem' 
+        onMouseEnter={() => setIsHover(true)} 
+        onMouseLeave={() => setIsHover(false)}
+        style={{left: isHover && index * 225 - 50 + index * 2.5}}
+      >
+        <img src={isData.img} alt="" />
 
-      {isHover && (
-        <div>
-         
-          <video src={trailer} autoPlay={true} loop />
-          <div className="itemInfo">
-              <div className="icons">
-                  <PlayArrowIcon className='icon'/>
-                  <AddIcon className='icon'/>
-                  <ThumbUpOutlinedIcon className='icon'/>
-                  <ThumbDownAltOutlinedIcon className='icon'/>
-              </div>
-              <div className="itemInfoTop">
-                <span>1 hour 14 mins</span>
-                <span className='limit'>+16</span>
-                <span>2006</span>
-              </div>
-              <div className="desc">
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. 
-                Dignissimos, dicta, dolore officia asperiores.
-              </div>
-              <div className="genre">Action</div>
+        {isHover && (
+          <div>
+          
+            <video src={isData.trailer} autoPlay={true} loop />
+            <div className="itemInfo">
+                <div className="icons">
+                    <PlayArrowIcon className='icon'/>
+                    <AddIcon className='icon'/>
+                    <ThumbUpOutlinedIcon className='icon'/>
+                    <ThumbDownAltOutlinedIcon className='icon'/>
+                </div>
+                <div className="itemInfoTop">
+                  <span>{isData.duration}</span>
+                  <span className='limit'>+{isData.limit}</span>
+                  <span>{isData.year}</span>
+                </div>
+                <div className="desc">
+                  {isData.desc}
+                </div>
+                <div className="genre">{isData.genre}</div>
+            </div>
           </div>
-        </div>
-      )}
-        
-    </div>
+        )}
+          
+      </div>
+    
+    </Link>
+    
   )
 }

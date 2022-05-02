@@ -1,10 +1,31 @@
 import './featured.scss'
-import pain from '../../pics/pain.jpg'
-import pain_1 from '../../pics/pain_1.jpg'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export default function Featured({type}) {
+
+    const [content, setContent] = useState({})
+
+    useEffect(() => {
+        const getRandomContent = async () => {
+            try {
+
+                const res = await axios.get(`/movies/random?type=${type}`, {
+                    headers: {
+                      token : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNjQ4YzY1N2YwMjdmM2I2MDY0Y2EyYiIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY1MTUxNDUyNiwiZXhwIjoxNjUxNjAwOTI2fQ.2HlNLzguQnwOrgBMzl4t0C6v1wYAT5hcSLops1Y2HsE"
+                    }})
+                setContent(res.data[0])
+                
+            } catch (err) {
+                console.log(err)
+            }
+            
+        }
+        getRandomContent()
+    }, [type])
+
   return (
     <div className='featured'>
 
@@ -32,16 +53,14 @@ export default function Featured({type}) {
             </div>
         )}
 
-        <img src={pain} alt="" />
+        <img src={content.img} alt="" />
 
         <div className="info">
 
-            <img src={pain_1} alt="" />
+            <img src={content.imgTitle} alt="" />
             
             <span className="desc">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Quis, rem dolorum? Odio unde accusantium, nam similique tenetur error sed hic aut molestiae animi. 
-                Cupiditate, ipsa velit libero cumque fugit adipisci?
+                {content.desc}
             </span>
             <div className="buttons">
                 <button className="play">
